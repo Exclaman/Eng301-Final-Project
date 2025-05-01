@@ -32,7 +32,7 @@ import random
 ############################################################
 ################# SPECIFY PINS AND OBJECTS #################
 ############################################################
-
+LED = RGBLED(red = 6, green = 7, blue = 8, active_high = True)
 
 
 ############################################################
@@ -54,12 +54,12 @@ wlan = network.WLAN(network.STA_IF)                     # <<< DO NOT REMOVE >>>
 wlan.active(True)                                       # <<< DO NOT REMOVE >>>
 wlan.connect(SSID, PASSWORD)                            # <<< DO NOT REMOVE >>>
 
-print("Attempting to connect to Wi-Fi")
+LED.color = (0,0,255)
 while not wlan.isconnected():                           # <<< DO NOT REMOVE >>>
     pass                                                # <<< DO NOT REMOVE >>>
 
 sleep(2)  # Extra delay for stability                   # <<< DO NOT REMOVE >>>
-print("Connected to Wi-Fi!")
+LED.color = (0,255,0)
 
 # Optional: disable Wi-Fi power save                    # <<< DO NOT REMOVE >>>
 wlan.config(pm = 0xa11140)                              # <<< DO NOT REMOVE >>>
@@ -74,6 +74,7 @@ try:                                                    # <<< DO NOT REMOVE >>>
     print("Connected to MQTT broker!")
 except Exception as e:                                  # <<< DO NOT REMOVE >>>
     print("Failed to connect to MQTT broker:", e)
+    LED.color = (255,0,0)
 
 
 ############################################################
@@ -100,6 +101,7 @@ while True:
         print(f"Published: {message_json}")
     except Exception as e:                                                    # <<< DO NOT REMOVE >>>
         print("Publish failed:",e)
+        LED.color = (255,0,0)
     
     # Determines how often the MQTT payload (i.e., sensorID and temperature reading) is sent
     sleep(2)
