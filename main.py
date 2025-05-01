@@ -12,6 +12,7 @@
 #################### IMPORT LIBRARIES ######################
 ############################################################
 from time import sleep                     # <<< DO NOT REMOVE >>>
+from picozero import RGBLED
 
 # Imports for MQTT communication           # <<< DO NOT REMOVE >>>
 try:
