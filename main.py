@@ -1,5 +1,5 @@
 
-#  If you want to run the code, make sure you run it through thonny!!
+
 
 
 
@@ -46,7 +46,7 @@ TOPIC = "pico/data" # "pico/data" is just a label                               
                     # It helps organize messages, like folders in a file system.  # <<< DO NOT REMOVE >>>
                     # The TOPIC could be any string, but leave it as "pico/data"  # <<< DO NOT REMOVE >>>
 
-SENSOR_ID = "Team01"  # !!!-- CHANGE THIS AS DIRECTED BY DR. WILFONG --!!!
+SENSOR_ID = "Team04"  # !!!-- CHANGE THIS AS DIRECTED BY DR. WILFONG --!!!
 
 # Connect to Wi-Fi                                      # <<< DO NOT REMOVE >>>
 wlan = network.WLAN(network.STA_IF)                     # <<< DO NOT REMOVE >>>
