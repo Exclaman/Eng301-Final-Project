@@ -1,5 +1,5 @@
 
-
+#  If you want to run the code, make sure you run it through thonny!!
 
 
 
