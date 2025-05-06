@@ -18,8 +18,10 @@ import machine
 import onewire
 import ds18x20
 from mfrc522 import MFRC522
-from machine import PIN, ADC, I2C
+from machine import Pin, ADC, I2C
 from ssd1306 import SSD1306_I2C
+
+
 # Imports for MQTT communication           # <<< DO NOT REMOVE >>>
 try:
     import network                         # <<< DO NOT REMOVE >>>
@@ -98,11 +100,35 @@ except Exception as e:                                  # <<< DO NOT REMOVE >>>
 while True:
     
     
+    
     tempSensor.convert_temp()
     time.sleep_ms(750)
     for tsListItem in tempList:
         tempC = tempSensor.read_temp(tsListItem)
+        tempF = tempC * (9/5) + 32
         x = print("{:.2f}".format(tempC), '[degC]')
+        
+    display.fill(0) # clears display
+    sleep(1)
+        
+    reader.init()
+    (stat, tag_type) = reader.request(reader.REQIDL)
+    if stat == reader.OK:
+        (stat, uid) = reader.SelectTagSN()
+        if stat == reader.OK:
+            card = int.from_bytes(bytes(uid),"little",False)
+            if card == 450427139:
+                print("Card ID: "+ str(card)+" UNLOCKED")
+                time.sleep(1)
+                display.text("Temperature is:", 0, 0) # write text starting at x=0 and y=0
+                display.text(str(tempC), 0, 40)
+                display.show() # make the changes take effect
+                
+                display.fill(0) # clears display
+            else:
+                print("Card ID: "+ str(card)+" UNKNOWN CARD!")
+                display.fill(0) # clears display
+                time.sleep(1)
 
     
     # Create and send MQTT payload                               # <<< DO NOT REMOVE >>>
