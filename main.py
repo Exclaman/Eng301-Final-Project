@@ -102,8 +102,7 @@ while True:
     time.sleep_ms(750)
     for tsListItem in tempList:
         tempC = tempSensor.read_temp(tsListItem)
-        tempF = tempC * (9/5) + 32
-        x = print("{:.2f}".format(tempF), '[degF]: ', "{:.2f}".format(tempC), '[degC]')
+        x = print("{:.2f}".format(tempC), '[degC]')
 
     
     # Create and send MQTT payload                               # <<< DO NOT REMOVE >>>
