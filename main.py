@@ -13,7 +13,13 @@
 ############################################################
 from time import sleep                     # <<< DO NOT REMOVE >>>
 from picozero import RGBLED
-
+import time
+import machine
+import onewire
+import ds18x20
+from mfrc522 import MFRC522
+from machine import PIN, ADC, I2C
+from ssd1306 import SSD1306_I2C
 # Imports for MQTT communication           # <<< DO NOT REMOVE >>>
 try:
     import network                         # <<< DO NOT REMOVE >>>
@@ -22,18 +28,26 @@ except ImportError:
 import json                                # <<< DO NOT REMOVE >>>
 from umqtt.robust import MQTTClient        # <<< DO NOT REMOVE >>>
 
-# Imports the library to make a random
-#    number. This is used to create a
-#    psuedo temperature value to transmit for demo
-#    purposes. You don't need this library for the
-#    project.
-import random
+
 
 ############################################################
 ################# SPECIFY PINS AND OBJECTS #################
 ############################################################
-LED = RGBLED(red = 6, green = 7, blue = 8, active_high = True)
+LED = RGBLED(red = 18, green = 19, blue = 20, active_high = True)
 
+Do_Pin = Pin(15, Pin.IN)
+AO_Pin = ADC(27)
+
+PinNum = machine.Pin(28)
+tempSensor = ds18x20.DS18X20(onewire.OneWire(PinNum))
+tempList = tempSensor.scan()
+
+reader = MFRC522(spi_id=0,sck=6,miso=4,mosi=7,cs=5,rst=8)
+
+display_width = 128 # pixel x values = 0 to 127
+display_height = 64 # pixel y values = 0 to 63
+i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000) # TX pin is Pin 0, RX pin is Pin 1
+display = SSD1306_I2C(display_width, display_height, i2c)
 
 ############################################################
 ##################### OTHER SETUP STUFF ####################
@@ -72,6 +86,7 @@ client.DEBUG = True                                     # <<< DO NOT REMOVE >>>
 try:                                                    # <<< DO NOT REMOVE >>>
     client.connect()                                    # <<< DO NOT REMOVE >>>
     print("Connected to MQTT broker!")
+    LED.color = (0,255,0)
 except Exception as e:                                  # <<< DO NOT REMOVE >>>
     print("Failed to connect to MQTT broker:", e)
     LED.color = (255,0,0)
@@ -80,16 +95,21 @@ except Exception as e:                                  # <<< DO NOT REMOVE >>>
 ############################################################
 ####################### INFINITE LOOP ######################
 ############################################################
-while True: 
-    # !!!-- Psuedo temperature sensor reading between 60 and 80 --!!!
-    # !!!-- You must use this variable name: temperature_sensor_reading --!!!
-    # !!!-- Currently, the temperature reading is just a random number for demo purposes --!!!
-    temperature_sensor_reading = random.random()*20 + 60
+while True:
+    
+    
+    tempSensor.convert_temp()
+    time.sleep_ms(750)
+    for tsListItem in tempList:
+        tempC = tempSensor.read_temp(tsListItem)
+        tempF = tempC * (9/5) + 32
+        x = print("{:.2f}".format(tempF), '[degF]: ', "{:.2f}".format(tempC), '[degC]')
+
     
     # Create and send MQTT payload                               # <<< DO NOT REMOVE >>>
     message_data = {                                             # <<< DO NOT REMOVE >>>
         "sensorID": SENSOR_ID,                                   # <<< DO NOT REMOVE >>>
-        "temperatureReading": temperature_sensor_reading         # <<< DO NOT REMOVE >>>
+        "temperatureReading": tempC         # <<< DO NOT REMOVE >>>
     }                                                            # <<< DO NOT REMOVE >>>
     message_json = json.dumps(message_data)  # Convert to JSON   # <<< DO NOT REMOVE >>>
     
