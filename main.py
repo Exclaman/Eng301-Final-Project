@@ -120,9 +120,10 @@ while True:
             if card == 450427139:
                 print("Card ID: "+ str(card)+" UNLOCKED")
                 time.sleep(1)
-                display.text("Temperature is:", 0, 0) # write text starting at x=0 and y=0
-                display.text(str(tempC), 0, 40)
-                display.show() # make the changes take effect
+                for x in range(60): 
+                    display.text("Temperature is:", 0, 0) # write text starting at x=0 and y=0
+                    display.text(str(tempC), 0, 40)
+                    display.show() # make the changes take effect
                 
                 display.fill(0) # clears display
             else:
