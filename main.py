@@ -51,6 +51,8 @@ display_height = 64 # pixel y values = 0 to 63
 i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000) # TX pin is Pin 0, RX pin is Pin 1
 display = SSD1306_I2C(display_width, display_height, i2c)
 
+number = 0
+
 ############################################################
 ##################### OTHER SETUP STUFF ####################
 ############################################################
@@ -105,7 +107,6 @@ while True:
     time.sleep_ms(750)
     for tsListItem in tempList:
         tempC = tempSensor.read_temp(tsListItem)
-        tempF = tempC * (9/5) + 32
         x = print("{:.2f}".format(tempC), '[degC]')
         
     display.fill(0) # clears display
@@ -121,19 +122,19 @@ while True:
             card = int.from_bytes(bytes(uid),"little",False)
             if card == 450427139:
                 print("Card ID: "+ str(card)+" UNLOCKED")
-                time.sleep(1)
                 display.fill(0)
-                for x in range(60): 
-
+                for x in range(10):
+                    
                     display.text("Temperature is:", 0, 0) # write text starting at x=0 and y=0
                     display.text(str(tempC), 0, 40)
                     display.show() # make the changes take effect
+                    time.sleep(2)
                 
-                display.fill(0) # clears display
+                print("locked up")
             else:
                 print("Card ID: "+ str(card)+" UNKNOWN CARD!")
                 display.fill(0) # clears display
-                display.text("Currently locked", 0, 0) # write text starting at x=0 and y=0
+                display.text("Wrong Card", 0, 0) # write text starting at x=0 and y=0
                 display.show()
                 time.sleep(1)
 
