@@ -37,15 +37,15 @@ from umqtt.robust import MQTTClient        # <<< DO NOT REMOVE >>>
 ############################################################
 LED = RGBLED(red = 18, green = 19, blue = 20, active_high = True)
 
-Do_Pin = Pin(15, Pin.IN)
-AO_Pin = ADC(27)
-
+# Temperature sensor info
 PinNum = machine.Pin(28)
 tempSensor = ds18x20.DS18X20(onewire.OneWire(PinNum))
 tempList = tempSensor.scan()
 
+#RFID reader info
 reader = MFRC522(spi_id=0,sck=6,miso=4,mosi=7,cs=5,rst=8)
 
+#OLED Screen info
 display_width = 128 # pixel x values = 0 to 127
 display_height = 64 # pixel y values = 0 to 63
 i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000) # TX pin is Pin 0, RX pin is Pin 1
@@ -109,6 +109,8 @@ while True:
         x = print("{:.2f}".format(tempC), '[degC]')
         
     display.fill(0) # clears display
+    display.text("Currently locked", 0, 0) # write text starting at x=0 and y=0
+    display.show()
     sleep(1)
         
     reader.init()
@@ -120,7 +122,9 @@ while True:
             if card == 450427139:
                 print("Card ID: "+ str(card)+" UNLOCKED")
                 time.sleep(1)
+                display.fill(0)
                 for x in range(60): 
+
                     display.text("Temperature is:", 0, 0) # write text starting at x=0 and y=0
                     display.text(str(tempC), 0, 40)
                     display.show() # make the changes take effect
@@ -129,13 +133,15 @@ while True:
             else:
                 print("Card ID: "+ str(card)+" UNKNOWN CARD!")
                 display.fill(0) # clears display
+                display.text("Currently locked", 0, 0) # write text starting at x=0 and y=0
+                display.show()
                 time.sleep(1)
 
     
     # Create and send MQTT payload                               # <<< DO NOT REMOVE >>>
     message_data = {                                             # <<< DO NOT REMOVE >>>
         "sensorID": SENSOR_ID,                                   # <<< DO NOT REMOVE >>>
-        "temperatureReading": tempC         # <<< DO NOT REMOVE >>>
+        "temperatureReading": tempC                              # <<< DO NOT REMOVE >>>
     }                                                            # <<< DO NOT REMOVE >>>
     message_json = json.dumps(message_data)  # Convert to JSON   # <<< DO NOT REMOVE >>>
     
