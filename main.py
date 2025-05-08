@@ -113,6 +113,14 @@ while True:
     display.text("Currently locked", 0, 0) # write text starting at x=0 and y=0
     display.show()
     sleep(1)
+
+
+    def ScreenFeedback():
+        for x in range(10):
+            display.text("Temperature is:", 0, 0) # write text starting at x=0 and y=0
+            display.text(str(tempC), 0, 40)
+            display.show() # make the changes take effect
+            time.sleep(2)
         
     reader.init()
     (stat, tag_type) = reader.request(reader.REQIDL)
@@ -123,12 +131,7 @@ while True:
             if card == 450427139:
                 print("Card ID: "+ str(card)+" UNLOCKED")
                 display.fill(0)
-                for x in range(10):
-                    
-                    display.text("Temperature is:", 0, 0) # write text starting at x=0 and y=0
-                    display.text(str(tempC), 0, 40)
-                    display.show() # make the changes take effect
-                    time.sleep(2)
+                ScreenFeedback()
                 
                 print("locked up")
             else:
@@ -157,4 +160,4 @@ while True:
         LED.color = (255,0,0)
     
     # Determines how often the MQTT payload (i.e., sensorID and temperature reading) is sent
-    sleep(2)
+    sleep(30)
